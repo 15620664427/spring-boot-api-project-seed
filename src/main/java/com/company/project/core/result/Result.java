@@ -1,4 +1,4 @@
-package com.company.project.core;
+package com.company.project.core.result;
 
 import com.alibaba.fastjson.JSON;
 
@@ -11,7 +11,8 @@ public class Result {
     private Object data;
 
     public Result setCode(ResultCode resultCode) {
-        this.code = resultCode.code;
+        this.code = resultCode.getCode();
+        this.message=resultCode.getMessage();
         return this;
     }
 
