@@ -1,7 +1,7 @@
-package com.conpany.project.redis;
+package com.company.project.redis;
 
+import com.company.project.Tester;
 import com.company.project.core.service.redis.RedisService;
-import com.conpany.project.Tester;
 import org.junit.Assert;
 import org.junit.Test;
 

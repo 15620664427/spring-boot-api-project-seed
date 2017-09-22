@@ -1,7 +1,7 @@
-package com.conpany.project.amqp;
+package com.company.project.amqp;
 
 import com.company.project.core.service.amqp.Sender;
-import com.conpany.project.Tester;
+import com.company.project.Tester;
 import org.junit.Test;
 import javax.annotation.Resource;
 

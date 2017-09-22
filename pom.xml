@@ -171,13 +171,16 @@
         </dependency>
 
         <!--FreeMaker 代替 JSP 作为页面渲染-->
+        <!-- <dependency>
+             <groupId>org.springframework.boot</groupId>
+             <artifactId>spring-boot-starter-freemarker</artifactId>
+         </dependency>-->
+
+        <!--mail配置,发送邮件-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-freemarker</artifactId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
-
-
-
 
 
     </dependencies>
