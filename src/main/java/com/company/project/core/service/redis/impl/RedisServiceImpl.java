@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.company.project.core.service.redis.RedisResult;
 import com.company.project.core.service.redis.RedisService;
 
-import com.company.project.core.utils.ProjectDynProps4Files;
+import com.company.project.core.service.dynProps4Files.DynProps4FilesService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.type.JavaType;
@@ -38,7 +38,7 @@ public class RedisServiceImpl implements RedisService {
     private static JedisPool pool = null;
 
     @Resource
-    private ProjectDynProps4Files dynProps4Files;
+    private DynProps4FilesService dynProps4Files;
 
     @Resource
     private Environment env;

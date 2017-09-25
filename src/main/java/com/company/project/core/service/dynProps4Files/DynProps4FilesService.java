@@ -1,4 +1,4 @@
-package com.company.project.core.utils;
+package com.company.project.core.service.dynProps4Files;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -13,10 +13,11 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 动态配置文件,可以设置更新周期
+ * 配置读取读取服务
  */
 @Component
-public class ProjectDynProps4Files {
-    private Logger _log = LoggerFactory.getLogger(ProjectDynProps4Files.class);
+public class DynProps4FilesService {
+    private Logger _log = LoggerFactory.getLogger(DynProps4FilesService.class);
     /**
      * 属性文件
      */
@@ -43,14 +44,14 @@ public class ProjectDynProps4Files {
      * @param delay  从<code>DynProps</code>被创建到第一次动态监视的时间间隔. 约束范围delay > 0
      * @param period 动态监视的时间间隔. 约束范围period >= 0；等于0表示不执行动态监视，退化为静态配置文件．
      */
-    public ProjectDynProps4Files(File[] files, long delay, long period) throws IOException {
+    public DynProps4FilesService(File[] files, long delay, long period) throws IOException {
         this.fileArray = files;
         this.delay = delay;
         this.period = period;
         init();
     }
 
-    public ProjectDynProps4Files(List<String> fileNames, long delay, long period) throws IOException {
+    public DynProps4FilesService(List<String> fileNames, long delay, long period) throws IOException {
         this.delay = delay;
         this.period = period;
         fileArray = new File[fileNames.size()];
@@ -70,7 +71,7 @@ public class ProjectDynProps4Files {
     }
 
 
-    public ProjectDynProps4Files(String fileNames, long delay, long period) throws IOException {
+    public DynProps4FilesService(String fileNames, long delay, long period) throws IOException {
         this.delay = delay;
         this.period = period;
         boolean isClassPath = false;
@@ -93,11 +94,11 @@ public class ProjectDynProps4Files {
         init();
     }
 
-    public ProjectDynProps4Files(File[] files, long period) throws IOException {
+    public DynProps4FilesService(File[] files, long period) throws IOException {
         this(files, 0, period);
     }
 
-    public ProjectDynProps4Files(String fileNames, long period) throws IOException {
+    public DynProps4FilesService(String fileNames, long period) throws IOException {
         this.period = period;
         this.delay = 0;
         String[] fileName = fileNames.split("[,|，|;|；]");
@@ -109,7 +110,7 @@ public class ProjectDynProps4Files {
         init();
     }
 
-    public ProjectDynProps4Files() {
+    public DynProps4FilesService() {
     }
 
     /**
@@ -252,7 +253,7 @@ public class ProjectDynProps4Files {
     }
 
     private class ShutdownHook implements Runnable {
-        private ProjectDynProps4Files projectDynProps4Files;
+        private DynProps4FilesService dynProps4FilesService;
 
         @Override
         public void run() {

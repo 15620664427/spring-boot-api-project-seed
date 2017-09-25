@@ -5,16 +5,18 @@ import com.company.project.core.service.zookeeper.ZkManager;
 import com.company.project.core.service.zookeeper.watcher.DomiChildrenNodeHandler;
 import com.company.project.core.service.zookeeper.watcher.DomiNodeHandler;
 import com.company.project.core.service.zookeeper.watcher.DomiZkEventWatcher;
-import com.company.project.core.utils.ProjectDynProps4Files;
+import com.company.project.core.service.dynProps4Files.DynProps4FilesService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.Inet4Address;
@@ -46,9 +48,10 @@ import java.util.concurrent.locks.ReentrantLock;
  *     +-machine_name2: machine_info2
  * </pre>
  *
- * @author liwei
- *         16-10-27 下午5:39
+ * @author jimersylee
+ * 2017-09-25 14:34:54
  */
+@Service
 public class DomiZkManager implements ZkManager {
     private static final String DEFAULT_CHARSET = "UTF-8";
     private static final Logger logger = LoggerFactory.getLogger(DomiZkManager.class);
@@ -60,8 +63,11 @@ public class DomiZkManager implements ZkManager {
     private AtomicBoolean online = new AtomicBoolean(true);
 
 
-    @Autowired
-    private ProjectDynProps4Files projectDynProps4Files;
+    @Resource
+    private DynProps4FilesService dynProps4FilesService;
+
+    @Resource
+    private Environment env;
 
     /**
      * 节点数据变化监听处理器
@@ -137,17 +143,14 @@ public class DomiZkManager implements ZkManager {
 
             localMachine = new MachineNode();
             String ip = "";
-            ip= projectDynProps4Files.getProperty("LOCAL_HOST_NAME", System.getProperty("domi.localIp"));
-            if(StringUtils.isBlank(ip)){
-                ip=getLocalIpAddress();
+            ip = env.getProperty("LOCAL_HOST_NAME");
+            if (StringUtils.isBlank(ip)) {
+                ip = getLocalIpAddress();
             }
             localMachine.setHostname(ip);
             Integer port = null;
-            try {
-                port = projectDynProps4Files.getInt("LOCAL_PORT", Integer.parseInt(System.getProperty("domi.localPort")));
-            } catch (NumberFormatException e) {
-                //do nothing
-            }
+            port = env.getProperty("LOCAL_PORT", Integer.class);
+
             if (port == null) {
                 port = DEFAULT_SERVICE_PORT;
             }
@@ -165,9 +168,10 @@ public class DomiZkManager implements ZkManager {
             return;
         }
 
-        this.hostPort = projectDynProps4Files.getProperty("ZK_HOSTS");
-        this.eventConsumerNum = projectDynProps4Files.getInt("EVENT_CONSUMER_NUM", 2);
-        this.sessionTimeout = projectDynProps4Files.getInt("SESSION_TIMEOUT", 3600000);
+
+        this.hostPort = env.getProperty("ZK_HOSTS");
+        this.eventConsumerNum=env.getProperty("EVENT_CONSUMER_NUM",Integer.class);
+        this.sessionTimeout=env.getProperty("SESSION_TIMEOUT",Integer.class);
 
 
         try {
@@ -224,7 +228,7 @@ public class DomiZkManager implements ZkManager {
 
             zk = new ZooKeeper(hostPort, sessionTimeout, watcher);
 
-            if(StringUtils.equalsIgnoreCase(projectDynProps4Files.getProperty("CLOSE_ZK_CNN", "FALSE"),"TRUE")){
+            if (StringUtils.equalsIgnoreCase(dynProps4FilesService.getProperty("CLOSE_ZK_CNN", "FALSE"), "TRUE")) {
                 //仅在本地环境使用
                 try {
                     TimeUnit.SECONDS.sleep(1);
@@ -234,7 +238,7 @@ public class DomiZkManager implements ZkManager {
                 try {
                     this.offlineLocalMachineNode();
                 } catch (Exception e) {
-                    logger.error("Offline failed.",e);
+                    logger.error("Offline failed.", e);
                 }
             }
 

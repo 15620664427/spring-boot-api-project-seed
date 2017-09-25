@@ -2,10 +2,11 @@ package com.company.project.core.service.zookeeper;
 
 /**
  * 机器节点
- * Created by liwei on 16/10/27.
+ * @author jimersylee
+ *
  */
 public class MachineNode {
-    static final String SPLITTER = ":";
+    private static final String SPLITTER = ":";
 
     /**
      * 机器名
