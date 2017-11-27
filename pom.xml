@@ -4,13 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.lihengming</groupId>
+    <groupId>com.github.jimersylee</groupId>
     <artifactId>spring-boot-api-project-seed</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
     <properties>
         <java.version>1.7</java.version>
+        <docker.image.prefix>jimersylee</docker.image.prefix>
     </properties>
 
     <!-- Inherit defaults from Spring Boot -->
@@ -135,6 +136,7 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
+            <version>4.11</version>
         </dependency>
 
 
@@ -196,6 +198,7 @@
             <version>1.0.0</version>
         </dependency>
 
+        <!--Spring Boot 配置处理依赖-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
@@ -203,14 +206,20 @@
         </dependency>
 
 
+
     </dependencies>
 
     <build>
         <plugins>
+            <!--Spring Boot Maven 插件-->
+            <!--它收集的类路径上所有 jar 文件，并构建成一个单一的、可运行的“*-jar”，这使得它更方便地执行和传输服务。
+            它搜索的 public static void main() 方法来标记为可运行的类。
+            它提供了一个内置的依赖解析器，用于设置版本号以匹配 Spring Boot 的依赖。您可以覆盖任何你想要的版本，但它会默认选择的 Boot 的版本集。-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <!--mvn 编译插件-->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
@@ -219,6 +228,33 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+
+
+            <!--docker插件-->
+            <!--Spotify 的 docker-maven-plugin 插件是用于构建 Maven 的 Docker Image
+            imageName指定了镜像的名字，本例为 jimersylee/spring-boot-api-project-seed
+            dockerDirectory指定 Dockerfile 的位置
+            resources是指那些需要和 Dockerfile 放在一起，在构建镜像时使用的文件，一般应用 jar 包需要纳入。本例，只需一个 jar 文件。
+-->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.4.3</version>
+                <configuration>
+                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <dockerDirectory>src/main/docker</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+
+
+
         </plugins>
     </build>
 

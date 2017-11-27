@@ -10,6 +10,23 @@ public class Result {
     private String message;
     private Object data;
 
+    public Result(){
+    }
+
+    public Result(ResultCode resultCode) {
+        this.code = resultCode.getCode();
+        this.message=resultCode.getMessage();
+    }
+
+    public Result(ResultCode resultCode,Object data) {
+        this.code = resultCode.getCode();
+        this.message=resultCode.getMessage();
+        this.data=data;
+    }
+
+
+
+
     public Result setCode(ResultCode resultCode) {
         this.code = resultCode.getCode();
         this.message=resultCode.getMessage();

@@ -19,7 +19,7 @@ import java.util.List;
 * Created by CodeGenerator on 2017/08/21.
 */
 @RestController
-@RequestMapping("/user")
+@RequestMapping(value="/user",produces="application/json;charset=UTF-8")
 public class UserController {
     @Resource
     private UserService userService;
@@ -58,8 +58,7 @@ public class UserController {
 
     @RequestMapping("/test")
     public Result test(){
-        Result result=new Result();
-        return result.setCode(ResultCode.FAIL);
+        return new Result(ResultCode.FAIL);
     }
 
     @RequestMapping("/e")
